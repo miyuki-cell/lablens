@@ -1,14 +1,4 @@
 """
-LabLens FastAPI server.
-
-Endpoints
----------
-GET  /health          → {"status": "ok"}
-POST /analyze         → AnalyzeResponse (sorted by priority + score desc)
-
-The server receives uploaded PDF files, runs the full pipeline on each,
-and returns a ranked list of report results.
-
 Run with:
     cd lablens/backend
     uvicorn api:app --reload --port 8000
@@ -30,27 +20,23 @@ sys.path.insert(0, os.path.dirname(__file__))
 from pipeline import run_pipeline, ReportResult
 
 
-# ---------------------------------------------------------------------------
-# App setup
-# ---------------------------------------------------------------------------
-
 app = FastAPI(
     title="LabLens API",
     description="AI-assisted practical report analyzer for teaching assistants.",
     version="0.1.0",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # tightened if needed; fine for hackathon
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["https://app.aspraklablens.me"],   
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-type"],
 )
 
 
-# ---------------------------------------------------------------------------
-# Response models
-# ---------------------------------------------------------------------------
 
 class EvidenceModel(BaseModel):
     model_config = {"extra": "allow"}
@@ -78,12 +64,7 @@ class ReportModel(BaseModel):
 
 class AnalyzeResponse(BaseModel):
     reports:       List[ReportModel]
-    summary:       dict   # overall counts across all reports
-
-
-# ---------------------------------------------------------------------------
-# Priority sort order
-# ---------------------------------------------------------------------------
+    summary:       dict  
 
 _PRIORITY_ORDER = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
 
@@ -91,10 +72,6 @@ _PRIORITY_ORDER = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
 def _sort_key(r: ReportResult) -> tuple:
     return (_PRIORITY_ORDER.get(r.priority, 9), -r.score)
 
-
-# ---------------------------------------------------------------------------
-# Endpoints
-# ---------------------------------------------------------------------------
 
 @app.get("/health")
 def health() -> dict:
@@ -121,7 +98,7 @@ async def analyze(files: List[UploadFile] = File(...)) -> AnalyzeResponse:
         try:
             pdf_bytes = await upload.read()
             result    = run_pipeline(pdf_bytes)
-            # Preserve the original filename from the upload
+            
             result.filename = upload.filename
             results.append(result)
         except Exception as exc:
@@ -136,11 +113,9 @@ async def analyze(files: List[UploadFile] = File(...)) -> AnalyzeResponse:
             status_code=422,
             detail={"message": "All files failed to process.", "errors": errors},
         )
-
-    # Sort: HIGH priority first, then by descending anomaly score
+        
     results.sort(key=_sort_key)
 
-    # Build cross-report summary
     summary = {
         "total":       len(results),
         "HIGH":        sum(1 for r in results if r.priority == "HIGH"),
