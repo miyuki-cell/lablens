@@ -3,14 +3,8 @@
 import { useState, useCallback } from "react"
 import type { AnalyzeResponse, Report, Finding } from "@/types/api"
 
-// ---------------------------------------------------------------------------
-// Config
-// ---------------------------------------------------------------------------
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.aspraklablens.me"
 
-// ---------------------------------------------------------------------------
-// Utility
-// ---------------------------------------------------------------------------
 type Priority = "LOW" | "MEDIUM" | "HIGH"
 
 const PRIORITY_COLOR: Record<Priority, string> = {
