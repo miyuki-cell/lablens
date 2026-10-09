@@ -27,9 +27,6 @@ function PriorityBadge({ priority }: { priority: Priority }) {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Upload view
-// ---------------------------------------------------------------------------
 function UploadView({ onResult }: { onResult: (r: AnalyzeResponse) => void }) {
   const [files, setFiles]         = useState<File[]>([])
   const [dragging, setDragging]   = useState(false)
@@ -135,9 +132,6 @@ function UploadView({ onResult }: { onResult: (r: AnalyzeResponse) => void }) {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Dashboard view
-// ---------------------------------------------------------------------------
 function DashboardView({
   response,
   onSelect,
@@ -151,7 +145,7 @@ function DashboardView({
 
   return (
     <div className="space-y-6">
-      {/* Summary bar */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-[#1f2328]">Analysis Results</h1>
@@ -172,7 +166,7 @@ function DashboardView({
         ))}
       </div>
 
-      {/* Report list */}
+      {}
       <div className="border border-[#e5e7eb] rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead>
@@ -214,9 +208,6 @@ function DashboardView({
   )
 }
 
-// ---------------------------------------------------------------------------
-// Finding card
-// ---------------------------------------------------------------------------
 function FindingCard({ finding }: { finding: Finding }) {
   const [open, setOpen] = useState(false)
 
@@ -241,13 +232,13 @@ function FindingCard({ finding }: { finding: Finding }) {
 
       {open && (
         <div className="border-t border-[#e5e7eb] px-4 py-3 space-y-3 bg-[#f7f8fa]">
-          {/* Reason */}
+          {}
           <div>
             <p className="text-xs font-semibold text-[#57606a] uppercase tracking-wide mb-1">Reason</p>
             <p className="text-sm text-[#1f2328]">{finding.reason}</p>
           </div>
 
-          {/* Evidence */}
+          {}
           {Object.keys(finding.evidence).length > 0 && (
             <div>
               <p className="text-xs font-semibold text-[#57606a] uppercase tracking-wide mb-1">Evidence</p>
@@ -275,9 +266,6 @@ function FindingCard({ finding }: { finding: Finding }) {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Detail view
-// ---------------------------------------------------------------------------
 function DetailView({ report, onBack }: { report: Report; onBack: () => void }) {
   return (
     <div className="space-y-6">
@@ -295,7 +283,7 @@ function DetailView({ report, onBack }: { report: Report; onBack: () => void }) 
         </div>
       </div>
 
-      {/* Finding counts */}
+      {}
       <div className="flex gap-3">
         {(["HIGH", "MEDIUM", "LOW"] as Priority[]).map(p => (
           report.finding_counts[p] > 0 && (
@@ -306,7 +294,7 @@ function DetailView({ report, onBack }: { report: Report; onBack: () => void }) 
         ))}
       </div>
 
-      {/* Missing sections */}
+      {}
       {report.missing_sections.length > 0 && (
         <div className="border border-amber-200 bg-amber-50 rounded-lg px-4 py-3 text-sm">
           <p className="font-medium text-amber-800 mb-1">Missing sections</p>
@@ -316,7 +304,7 @@ function DetailView({ report, onBack }: { report: Report; onBack: () => void }) 
         </div>
       )}
 
-      {/* Findings */}
+      {}
       <div>
         <h2 className="font-semibold text-[#1f2328] mb-3">
           Findings <span className="text-[#57606a] font-normal text-sm">({report.findings.length})</span>
@@ -330,7 +318,7 @@ function DetailView({ report, onBack }: { report: Report; onBack: () => void }) 
         )}
       </div>
 
-      {/* Score breakdown */}
+      {}
       {Object.keys(report.score_breakdown).length > 0 && (
         <div>
           <h2 className="font-semibold text-[#1f2328] mb-3">Score Breakdown</h2>
@@ -351,9 +339,6 @@ function DetailView({ report, onBack }: { report: Report; onBack: () => void }) 
   )
 }
 
-// ---------------------------------------------------------------------------
-// Root page — state machine
-// ---------------------------------------------------------------------------
 type AppState =
   | { view: "upload" }
   | { view: "dashboard"; response: AnalyzeResponse }
